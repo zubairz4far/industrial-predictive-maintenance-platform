@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "industrial-predictive-maintenance-platform"
-version = "0.1.0"
-description = "Leakage-aware predictive maintenance baseline with deterministic evaluation evidence."
+version = "0.2.0"
+description = "Evaluated predictive-maintenance ML with synthetic CI fixtures and Scania APS benchmark evidence."
 requires-python = ">=3.11,<3.14"
 dependencies = [
   "numpy>=2.0,<3",

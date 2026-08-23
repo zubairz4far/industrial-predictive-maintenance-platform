@@ -1,0 +1,70 @@
+{
+  "release": "v0.2",
+  "dataset": {
+    "name": "APS Failure at Scania Trucks",
+    "uci_dataset_id": 421,
+    "doi": "10.24432/C51S51",
+    "source_url": "https://archive.ics.uci.edu/dataset/421/aps%2Bfailure%2Bat%2Bscania%2Btrucks",
+    "kind": "operational data collected from heavy Scania trucks in everyday usage",
+    "train_rows": 60000,
+    "official_test_rows": 16000,
+    "features": 170,
+    "train_positive_rate": 0.016666666666666666,
+    "test_positive_rate": 0.0234375,
+    "missing_cells_train": 850015,
+    "train_sha256": "bb484302e3a3a1c8ef5e1f0129c4dc7cbd58f350867f95b575461ca21ab6b9da",
+    "test_sha256": "2cdf6f7661c7b4c63333c93cdec36a3a82350176b604a2312cf82799fb2712f3"
+  },
+  "split": {
+    "strategy": "official test held out; official training split stratified 70/15/15 for fit/calibration/threshold tuning",
+    "seed": 42,
+    "fit_rows": 42000,
+    "calibration_rows": 9000,
+    "development_rows": 9000,
+    "test_rows": 16000
+  },
+  "cost_model": {
+    "false_positive": 10,
+    "false_negative": 500,
+    "source": "original IDA 2016 / Scania challenge metric"
+  },
+  "calibration": "sigmoid/Platt scaling on dedicated calibration split",
+  "models": {
+    "logistic_regression": {
+      "pr_auc": 0.7937751114982717,
+      "roc_auc": 0.9809538560000002,
+      "brier": 0.009523472671881382,
+      "recall": 0.88,
+      "precision": 0.5527638190954773,
+      "threshold": 0.03559391618621555,
+      "false_positives": 267,
+      "false_negatives": 45,
+      "challenge_cost": 25170,
+      "cost_per_1000": 1573.125
+    },
+    "hist_gradient_boosting": {
+      "pr_auc": 0.8710655139956448,
+      "roc_auc": 0.991975936,
+      "brier": 0.007347860366177708,
+      "recall": 0.9253333333333333,
+      "precision": 0.5249621785173979,
+      "threshold": 0.031251402825574516,
+      "false_positives": 314,
+      "false_negatives": 28,
+      "challenge_cost": 17140,
+      "cost_per_1000": 1071.25
+    }
+  },
+  "promotion": {
+    "baseline": "logistic_regression",
+    "candidate": "hist_gradient_boosting",
+    "decision": "PROMOTE",
+    "rule": "candidate cost <= 95% of baseline cost, PR-AUC >= baseline, recall >= baseline"
+  },
+  "runtime": {
+    "python": "3.12.14",
+    "numpy": "2.5.2",
+    "pandas": "2.3.3",
+    "scikit_learn": "1.9.0"
+  }
+}
