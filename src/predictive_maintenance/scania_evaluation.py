@@ -16,7 +16,14 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 
-from .scania import TARGET, UCI_DATASET_ID, UCI_DATASET_URL, UCI_DOI, load_scania_dataset, sha256_file
+from .scania import (
+    TARGET,
+    UCI_DATASET_ID,
+    UCI_DATASET_URL,
+    UCI_DOI,
+    load_scania_dataset,
+    sha256_file,
+)
 
 FALSE_POSITIVE_COST = 10
 FALSE_NEGATIVE_COST = 500
@@ -212,7 +219,10 @@ def evaluate_scania(
             "test_sha256": sha256_file(dataset.test_path),
         },
         "split": {
-            "strategy": "official test held out; official training split stratified 70/15/15 for fit/calibration/threshold tuning",
+            "strategy": (
+                "official test held out; official training split stratified 70/15/15 "
+                "for fit/calibration/threshold tuning"
+            ),
             "seed": seed,
             "fit_rows": len(x_fit),
             "calibration_rows": len(x_cal),
@@ -230,7 +240,10 @@ def evaluate_scania(
             "baseline": "logistic_regression",
             "candidate": "hist_gradient_boosting",
             "decision": "PROMOTE" if promote else "REJECT",
-            "rule": "candidate cost <= 95% of baseline cost, PR-AUC >= baseline, recall >= baseline",
+            "rule": (
+                "candidate cost <= 95% of baseline cost, PR-AUC >= baseline, "
+                "recall >= baseline"
+            ),
         },
         "runtime": {
             "python": platform.python_version(),
