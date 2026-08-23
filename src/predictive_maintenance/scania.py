@@ -21,6 +21,8 @@ TEST_URL = (
 )
 TRAIN_FILENAME = "aps_failure_training_set.csv"
 TEST_FILENAME = "aps_failure_test_set.csv"
+TRAIN_SHA256 = "bb484302e3a3a1c8ef5e1f0129c4dc7cbd58f350867f95b575461ca21ab6b9da"
+TEST_SHA256 = "2cdf6f7661c7b4c63333c93cdec36a3a82350176b604a2312cf82799fb2712f3"
 TARGET = "class"
 EXPECTED_COLUMNS = 171
 EXPECTED_TRAIN_ROWS = 60_000
@@ -35,6 +37,14 @@ class ScaniaDataset:
     test_path: Path
 
 
+def sha256_file(path: str | Path) -> str:
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
 def _download(url: str, destination: Path) -> None:
     destination.parent.mkdir(parents=True, exist_ok=True)
     temporary = destination.with_suffix(destination.suffix + ".part")
@@ -42,6 +52,15 @@ def _download(url: str, destination: Path) -> None:
     with urllib.request.urlopen(request, timeout=120) as response, temporary.open("wb") as handle:
         shutil.copyfileobj(response, handle, length=1024 * 1024)
     temporary.replace(destination)
+
+
+def _validate_hash(path: Path, expected: str) -> None:
+    actual = sha256_file(path)
+    if actual != expected:
+        raise ValueError(
+            f"SHA256 mismatch for {path.name}: expected {expected}, found {actual}. "
+            "Remove the file and download the pinned UCI copy again."
+        )
 
 
 def ensure_scania_files(data_dir: str | Path, download: bool = False) -> tuple[Path, Path]:
@@ -59,6 +78,8 @@ def ensure_scania_files(data_dir: str | Path, download: bool = False) -> tuple[P
         _download(TRAIN_URL, train_path)
     if not test_path.exists():
         _download(TEST_URL, test_path)
+    _validate_hash(train_path, TRAIN_SHA256)
+    _validate_hash(test_path, TEST_SHA256)
     return train_path, test_path
 
 
@@ -91,11 +112,3 @@ def load_scania_dataset(
         if len(test) != EXPECTED_TEST_ROWS:
             raise ValueError(f"Expected {EXPECTED_TEST_ROWS} test rows, found {len(test)}")
     return ScaniaDataset(train=train, test=test, train_path=train_path, test_path=test_path)
-
-
-def sha256_file(path: str | Path) -> str:
-    digest = hashlib.sha256()
-    with Path(path).open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
