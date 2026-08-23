@@ -4,5 +4,14 @@ scikit-learn==1.9.0
 scipy==1.18.1
 joblib==1.5.3
 threadpoolctl==3.6.0
+narwhals==2.25.0
+python-dateutil==2.9.0.post0
+pytz==2026.3.post1
+tzdata==2026.3
+six==1.17.0
 pytest==9.1.1
+iniconfig==2.3.0
+packaging==26.3
+pluggy==1.6.0
+pygments==2.21.0
 ruff==0.16.4
