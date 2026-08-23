@@ -1,0 +1,57 @@
+{
+  "dataset": {
+    "kind": "deterministic synthetic telemetry",
+    "seed": 42,
+    "rows": 7200,
+    "machines": 40,
+    "positive_rate": 0.06097222222222222,
+    "train_rows": 4320,
+    "dev_rows": 1440,
+    "test_rows": 1440
+  },
+  "features": [
+    "temperature_c",
+    "vibration_mm_s",
+    "pressure_bar",
+    "rpm",
+    "load_pct",
+    "lubricant_quality",
+    "hours_since_maintenance",
+    "machine_age_days"
+  ],
+  "target": "failure_next_24h",
+  "cost_model": {
+    "false_negative": 12,
+    "false_positive": 1
+  },
+  "models": {
+    "logistic_regression": {
+      "pr_auc": 0.15107892518172755,
+      "roc_auc": 0.7567567567567568,
+      "brier": 0.1377226212112335,
+      "recall": 0.4864864864864865,
+      "precision": 0.09944751381215469,
+      "threshold": 0.5399999999999999,
+      "false_positives": 163,
+      "false_negatives": 19,
+      "business_cost": 391
+    },
+    "hist_gradient_boosting": {
+      "pr_auc": 0.18657946928645053,
+      "roc_auc": 0.7482807112172757,
+      "brier": 0.05396619924665076,
+      "recall": 0.40540540540540543,
+      "precision": 0.11450381679389313,
+      "threshold": 0.3899999999999999,
+      "false_positives": 116,
+      "false_negatives": 22,
+      "business_cost": 380
+    }
+  },
+  "promotion": {
+    "candidate": "hist_gradient_boosting",
+    "baseline": "logistic_regression",
+    "decision": "REJECT",
+    "rule": "candidate cost <= baseline cost, PR-AUC >= baseline, recall >= 0.60"
+  }
+}
