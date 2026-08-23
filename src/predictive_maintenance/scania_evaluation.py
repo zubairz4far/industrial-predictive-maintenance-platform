@@ -54,7 +54,7 @@ class SigmoidCalibrator:
         clipped = np.clip(np.asarray(probabilities, dtype=float), 1e-6, 1 - 1e-6)
         return np.log(clipped / (1 - clipped)).reshape(-1, 1)
 
-    def fit(self, probabilities: np.ndarray, y_true: np.ndarray) -> "SigmoidCalibrator":
+    def fit(self, probabilities: np.ndarray, y_true: np.ndarray) -> SigmoidCalibrator:
         self._model.fit(self._logit(probabilities), y_true)
         return self
 
