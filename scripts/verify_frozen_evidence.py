@@ -27,12 +27,19 @@ def differences(
 ) -> list[str]:
     """Return human-readable differences between expected and actual JSON."""
     if isinstance(expected, bool) or isinstance(actual, bool):
-        return [] if type(expected) is type(actual) and expected == actual else [f"{path}: boolean changed"]
+        if type(expected) is type(actual) and expected == actual:
+            return []
+        return [f"{path}: boolean changed"]
     if isinstance(expected, int) or isinstance(actual, int):
-        return [] if type(expected) is type(actual) and expected == actual else [f"{path}: integer/type changed: {expected!r} != {actual!r}"]
+        if type(expected) is type(actual) and expected == actual:
+            return []
+        return [f"{path}: integer/type changed: {expected!r} != {actual!r}"]
     if isinstance(expected, float) or isinstance(actual, float):
         if not (isinstance(expected, float) and isinstance(actual, float)):
-            return [f"{path}: numeric type changed: {type(expected).__name__} != {type(actual).__name__}"]
+            return [
+                f"{path}: numeric type changed: "
+                f"{type(expected).__name__} != {type(actual).__name__}"
+            ]
         if not (math.isfinite(expected) and math.isfinite(actual)):
             return [f"{path}: non-finite numeric value is not valid evidence"]
         if math.isclose(expected, actual, abs_tol=atol, rel_tol=rtol):
@@ -49,13 +56,15 @@ def differences(
         if extra:
             problems.append(f"{path}: unexpected keys: {extra!r}")
         for key in sorted(expected.keys() & actual.keys()):
-            problems.extend(differences(expected[key], actual[key], path=f"{path}.{key}", atol=atol, rtol=rtol))
+            problems.extend(
+                differences(expected[key], actual[key], path=f"{path}.{key}", atol=atol, rtol=rtol)
+            )
         return problems
     if isinstance(expected, list):
         if len(expected) != len(actual):
             return [f"{path}: list length changed: {len(expected)} != {len(actual)}"]
         problems = []
-        for index, (lhs, rhs) in enumerate(zip(expected, actual)):
+        for index, (lhs, rhs) in enumerate(zip(expected, actual, strict=True)):
             problems.extend(differences(lhs, rhs, path=f"{path}[{index}]", atol=atol, rtol=rtol))
         return problems
     return [] if expected == actual else [f"{path}: value changed: {expected!r} != {actual!r}"]
@@ -71,14 +80,19 @@ def main() -> int:
     if not (0 <= args.atol <= DEFAULT_ATOL and 0 <= args.rtol <= DEFAULT_RTOL):
         parser.error("tolerances cannot exceed the reviewed benchmark contract")
     expected = json.loads(args.frozen.read_text(encoding="utf-8"), parse_constant=_reject_nonfinite)
-    observed = json.loads(args.observed.read_text(encoding="utf-8"), parse_constant=_reject_nonfinite)
+    observed = json.loads(
+        args.observed.read_text(encoding="utf-8"), parse_constant=_reject_nonfinite
+    )
     problems = differences(expected, observed, atol=args.atol, rtol=args.rtol)
     if problems:
         print("Frozen evidence verification FAILED:")
         for problem in problems:
             print(" -", problem)
         return 1
-    print("Frozen evidence verification PASSED: exact structure/decisions/counts/hashes; bounded float tolerance")
+    print(
+        "Frozen evidence verification PASSED: exact structure/decisions/counts/hashes; "
+        "bounded float tolerance"
+    )
     return 0
 
 
