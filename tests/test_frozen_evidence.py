@@ -1,6 +1,13 @@
 """Regression coverage for comparison of frozen Scania evidence."""
 
-from scripts.verify_frozen_evidence import differences
+import importlib.util
+from pathlib import Path
+
+MODULE_PATH = Path(__file__).resolve().parents[1] / "scripts" / "verify_frozen_evidence.py"
+spec = importlib.util.spec_from_file_location("verify_frozen_evidence", MODULE_PATH)
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+differences = module.differences
 
 
 def test_tolerates_observed_ci_float_drift():
