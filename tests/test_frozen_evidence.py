@@ -4,8 +4,16 @@ from scripts.verify_frozen_evidence import differences
 
 
 def test_tolerates_observed_ci_float_drift():
-    expected = {"models": {"baseline": {"pr_auc": 0.7937751114982717, "threshold": 0.03559391618621555, "false_positives": 267}}}
-    observed = {"models": {"baseline": {"pr_auc": 0.7937891435182487, "threshold": 0.035588263002883314, "false_positives": 267}}}
+    expected = {"models": {"baseline": {
+        "pr_auc": 0.7937751114982717,
+        "threshold": 0.03559391618621555,
+        "false_positives": 267,
+    }}}
+    observed = {"models": {"baseline": {
+        "pr_auc": 0.7937891435182487,
+        "threshold": 0.035588263002883314,
+        "false_positives": 267,
+    }}}
     assert differences(expected, observed) == []
 
 
