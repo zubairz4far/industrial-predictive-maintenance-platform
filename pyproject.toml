@@ -9,7 +9,7 @@ description = "Evaluated predictive-maintenance ML with synthetic CI fixtures an
 requires-python = ">=3.11,<3.14"
 dependencies = [
   "numpy>=2.0,<3",
-  "pandas>=2.2,<3",
+  "pandas>=2.2,<4",
   "scikit-learn>=1.5,<2",
 ]
 
